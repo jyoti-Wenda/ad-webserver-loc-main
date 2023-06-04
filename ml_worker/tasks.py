@@ -53,6 +53,7 @@ def elab_file(user, filePath, save, output, ocr,webhook, pathfile, localpath, se
         formatted_result, result = lmutils.elab(filePath,ocr)
         if output.lower() == 'excel':
             output_file, output_name = xlsutils.format_doc('loc', os.path.basename(filePath), result, pathfile)
+            print('output_file',output_file)
             doc_name_contents = re.split("_", os.path.basename(filePath), 2)
             if len(doc_name_contents) == 3:
                 orig_sender = doc_name_contents[0]

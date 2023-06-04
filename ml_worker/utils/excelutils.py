@@ -27,12 +27,14 @@ def prune_text(text):
 
 def cleanup_text(text):
     result = re.sub(r'[^a-zA-Z0-9]+', '', text)
+    print('result',result)
     return result
 
 
 def remove_leading_trailing_special_characters(text):
     result = re.sub(r'^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$', '', text)
     return result
+
 
 
 
@@ -232,8 +234,8 @@ def loc(doc_name, extracted_data):
         attach_filename = doc_name
     reference_number = attach_filename.replace(".PDF", "").replace(".pdf", "")
 
-    lc_number, date_of_issue, applicant, beneficiary, port_of_loading = [], [], [], [], []
-    port_of_discharge, latest_date_of_shipment, description = [], [], []
+    lcNumber, dateOfIssue, Applicant, Beneficiary, portOfLoading = [], [], [], [], []
+    portOfDischarge, latestDateOfShipment, Description = [], [], []
     for page_nr in extracted_data:
         print(page_nr)
         data_to_review = extracted_data[page_nr]['data_to_review']
@@ -244,29 +246,30 @@ def loc(doc_name, extracted_data):
                 for element_item in element['value']:
                     # print(element_item['key'])
                     if element_item['key'] == 'lc_number' and element_item['value'] != "":
+                        # print('lc_number Before',lcNumber)
                         value = remove_leading_trailing_special_characters(element_item['value'])
-                        lc_number.append(value)
+                        lcNumber.append(value)
                     if element_item['key'] == 'date_of_issue' and element_item['value'] != "":
                         value = remove_leading_trailing_special_characters(element_item['value'])
-                        date_of_issue.append(value)
+                        dateOfIssue.append(value)
                     if element_item['key'] == 'applicant' and element_item['value'] != "":
                         value = remove_leading_trailing_special_characters(element_item['value'])
-                        applicant.append(value)
+                        Applicant.append(value)
                     if element_item['key'] == 'beneficiary' and element_item['value'] != "":
                         value = remove_leading_trailing_special_characters(element_item['value'])
-                        beneficiary.append(value)
+                        Beneficiary.append(value)
                     if element_item['key'] == 'port_of_loading' and element_item['value'] != "":
                         value = remove_leading_trailing_special_characters(element_item['value'])
-                        port_of_loading.append(value)
+                        portOfLoading.append(value)
                     if element_item['key'] == 'port_of_discharge' and element_item['value'] != "":
                         value = remove_leading_trailing_special_characters(element_item['value'])
-                        port_of_discharge.append(value)
+                        portOfDischarge.append(value)
                     if element_item['key'] == 'latest_date_of_shipment' and element_item['value'] != "":
                         value = remove_leading_trailing_special_characters(element_item['value'])
-                        latest_date_of_shipment.append(value)
+                        latestDateOfShipment.append(value)
                     if element_item['key'] == 'description' and element_item['value'] != "":
                         value = remove_leading_trailing_special_characters(element_item['value'])
-                        description.append(value)
+                        Description.append(value)
 
     xls_filepath = os.path.join(UPLOAD_FOLDER, reference_number + ".xlsx")
     if not os.path.exists(UPLOAD_FOLDER):
@@ -274,14 +277,14 @@ def loc(doc_name, extracted_data):
     # CURRENT EXCEL HEADER
     # MERCE | TIPOLOGIA CONTAINER | SIGLA | COLLI | PESO LORDO | PESO NETTO | VOLUME | SIGILLI | TIPO | IMBALLO | TARA
     df = pd.DataFrame({
-                       'lc_number': pd.Series(lc_number),
-                       'date_of_issue': pd.Series(date_of_issue),
-                       'applicant': pd.Series(applicant),
-                       'beneficiary': pd.Series(beneficiary),
-                       'port_of_loading': pd.Series(port_of_loading),
-                       'port_of_discharge': pd.Series(port_of_discharge),
-                       'latest_date_of_shipment': pd.Series(latest_date_of_shipment),
-                       'description': pd.Series(description)
+                       'lc_number': pd.Series(lcNumber),
+                       'date_of_issue': pd.Series(dateOfIssue),
+                       'applicant': pd.Series(Applicant),
+                       'beneficiary': pd.Series(Beneficiary),
+                       'port_of_loading': pd.Series(portOfLoading),
+                       'port_of_discharge': pd.Series(portOfDischarge),
+                       'latest_date_of_shipment': pd.Series(latestDateOfShipment),
+                       'description': pd.Series(Description)
                        })
 
     writer = pd.ExcelWriter(xls_filepath, engine='xlsxwriter')
